@@ -1,0 +1,13 @@
+{
+  "name": "labjs",
+  "homepage": "https://github.com/getify/LABjs",
+  "_release": "d314fbea0d",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d314fbea0d84f9c96f844f39c2ff9879ca6c9323"
+  },
+  "_source": "git://github.com/getify/LABjs.git",
+  "_target": "*",
+  "_originalSource": "labjs"
+}
