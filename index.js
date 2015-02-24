@@ -1,6 +1,14 @@
 'use strict';
 var Hapi = require('hapi');
 var Path = require('path');
+var superAgent = require('superagent');
+var Boom = require('boom');
+var openMap =require('./openMap.config').config;
+
+
+
+
+
 
 var server = new Hapi.Server();
 server.connection({
@@ -36,14 +44,7 @@ server.route({
     method: 'GET',
     path: '/',
     handler: function(request, reply) {
-        var news = [{
-            title: 'Blaah Blaah',
-            desciption: 'Blaah blaah balck sheep have you any wool. Yes sir sir three bags full.one for my master ',
-            source: 'Google Inc',
-            img: ''
-
-        }];
-        reply.view('index', news);
+        reply.view('index');
     }
 });
 
@@ -57,6 +58,41 @@ server.route({
 //         console.log('Server started at ' + server.info.uri);
 //     });
 // });
+
+
+server.route({
+    method: 'GET',
+    path: '/gettemp',
+    handler: function(request, reply) {
+
+        var cityUrl = openMap.url + 'city?id=524901&units=metric&APPID=' + openMap.appId;
+
+        console.log(cityUrl);
+        superAgent.get(cityUrl).end(function(data) {
+            if (data.ok) {
+                var response = {};
+                response.min = [];
+                response.max = [];
+                response.avg = [];
+                response.dates = [];
+                data.body.list.forEach(function(temp) {
+                    response.min.push(temp.main['temp_min']);
+                    response.max.push(temp.main['temp_max']);
+                    response.avg.push(temp.main.temp);
+                    response.dates.push(temp['dt_txt']);
+                });
+
+                reply(response);
+
+            }
+            else{
+                 return reply(Boom.badRequest('Unsupported parameter'));
+            }
+
+        });
+
+    }
+});
 
 server.start(function() {
     console.log('Server started at ' + server.info.uri);
